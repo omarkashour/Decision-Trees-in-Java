@@ -2,8 +2,7 @@ import java.util.LinkedList;
 
 public class Node {
     String label;
-    Node left;
-    Node right;
+    LinkedList<Node> children;
     boolean isLeaf;
     double prediction;
 
@@ -11,10 +10,9 @@ public class Node {
         this.label = label;
     }
 
-    public Node(String label, Node left, Node right) {
+    public Node(String label, LinkedList<Node> children) {
         this.label = label;
-        this.left = left;
-        this.right = right;
+        this.children = children;
     }
 
     public String getLabel() {
@@ -25,21 +23,6 @@ public class Node {
         this.label = label;
     }
 
-    public Node getLeft() {
-        return left;
-    }
-
-    public void setLeft(Node left) {
-        this.left = left;
-    }
-
-    public Node getRight() {
-        return right;
-    }
-
-    public void setRight(Node right) {
-        this.right = right;
-    }
 
     public boolean isLeaf() {
         return isLeaf;

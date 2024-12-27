@@ -15,7 +15,6 @@ public class DataAttribute {
         this.name = name;
         this.frequency = frequency;
         this.subAttributes = subAttributes;
-
     }
 
     public String getName() {
