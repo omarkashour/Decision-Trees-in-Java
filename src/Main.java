@@ -9,13 +9,16 @@ public class Main {
 
     static final String FILE_PATH = "./mushroom.csv";
     static final String TARGET_ATTRIBUTE = "EDIBLE";
+    static String dataSet = "";
 
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File(FILE_PATH);
         Scanner sc = new Scanner(file);
         String header = sc.nextLine();
         String[] attributes = header.split(",");
+
         DecisionTree tree = new DecisionTree();
+
     }
 }
 
