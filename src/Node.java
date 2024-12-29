@@ -1,51 +1,17 @@
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Node {
-    String label;
-    LinkedList<Node> children;
-    boolean isLeaf;
-    double prediction;
+    String attribute;
+    Map<String, Node> children;
+    String classification;
 
-    public Node(String label) {
-        this.label = label;
+    public Node(String attribute) {
+        this.attribute = attribute;
+        this.children = new HashMap<>();
     }
-
-    public Node(String label, LinkedList<Node> children) {
-        this.label = label;
-        this.children = children;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
 
     public boolean isLeaf() {
-        return isLeaf;
-    }
-
-    public void setLeaf(boolean leaf) {
-        isLeaf = leaf;
-    }
-
-    public double getPrediction() {
-        return prediction;
-    }
-
-    public void setPrediction(double prediction) {
-        this.prediction = prediction;
-    }
-
-    @Override
-    public String toString() {
-        return "Node{" +
-                "label='" + label + '\'' +
-                ", isLeaf=" + isLeaf +
-                ", prediction=" + prediction +
-                '}';
+        return classification != null;
     }
 }
