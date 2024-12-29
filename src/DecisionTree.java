@@ -114,10 +114,9 @@ public class DecisionTree {
 
         Node node = new Node(bestAttribute);
         Map<String, List<Map<String, String>>> partitions = partitionData(data, bestAttribute);
-        System.out.println("Best attribute: " + bestAttribute);
+//        System.out.println("Best attribute: " + bestAttribute);
         ArrayList<String> remainingAttributes = new ArrayList<>(attributes);
         remainingAttributes.remove(bestAttribute);
-        attributes.remove(bestAttribute);
 
         for (Map.Entry<String, List<Map<String, String>>> entry : partitions.entrySet()) {
             String attributeValue = entry.getKey();
@@ -206,7 +205,7 @@ public class DecisionTree {
 
         return metrics;
     }
-
+    static int nodes = 1;
     public void printTree(Node node, String indent) {
         if (node == null) return;
 
@@ -214,6 +213,7 @@ public class DecisionTree {
             System.out.println(indent + "Leaf Node: Class = " + node.classification);
         } else {
             System.out.println(indent + "Decision Node: Attribute = " + node.attribute);
+            nodes++;
             for (Map.Entry<String, Node> entry : node.children.entrySet()) {
                 System.out.println(indent + "  If " + node.attribute + " is [" + entry.getKey() + "]:");
                 printTree(entry.getValue(), indent + "    ");

@@ -13,7 +13,7 @@ public class Main {
             List<Map<String, String>> data = parseCSV(FILE_PATH);
 
             // split data into training and test sets
-            Map<String, List<Map<String, String>>> splitData = splitData(data, 0.2);
+            Map<String, List<Map<String, String>>> splitData = splitData(data, 0.5);
             List<Map<String, String>> trainingData = splitData.get("train");
             List<Map<String, String>> testData = splitData.get("test");
 
@@ -45,7 +45,7 @@ public class Main {
             System.out.printf("Specificity: %.2f%%\n", metrics.get("specificity") * 100);
             System.out.printf("False Positive Rate (FPR): %.2f%%\n", metrics.get("fpr") * 100);
 
-
+            System.out.println("Nodes used: " + DecisionTree.nodes);
         } catch (FileNotFoundException e) {
             System.err.println("Error reading the dataset: " + e.getMessage());
         }
