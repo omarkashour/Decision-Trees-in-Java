@@ -13,7 +13,7 @@ public class Main {
             List<Map<String, String>> data = parseCSV(FILE_PATH);
 
             // split data into training and test sets
-            Map<String, List<Map<String, String>>> splitData = splitData(data, 0.5);
+            Map<String, List<Map<String, String>>> splitData = splitData(data, 0.2);
             List<Map<String, String>> trainingData = splitData.get("train");
             List<Map<String, String>> testData = splitData.get("test");
 

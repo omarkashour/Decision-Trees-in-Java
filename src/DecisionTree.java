@@ -57,8 +57,9 @@ public class DecisionTree {
             }
 
             // weight by the size of the subset
-            weightedEntropy += (double) subsetSize / totalExamples * subsetEntropy;
+            weightedEntropy += (double) (subsetSize / totalExamples) * subsetEntropy;
         }
+
 
         return totalEntropy - weightedEntropy;
     }
@@ -108,13 +109,15 @@ public class DecisionTree {
                 bestGainRatio = gainRatio;
                 bestAttribute = attribute;
             }
+
         }
 
         Node node = new Node(bestAttribute);
         Map<String, List<Map<String, String>>> partitions = partitionData(data, bestAttribute);
-
+        System.out.println("Best attribute: " + bestAttribute);
         ArrayList<String> remainingAttributes = new ArrayList<>(attributes);
         remainingAttributes.remove(bestAttribute);
+        attributes.remove(bestAttribute);
 
         for (Map.Entry<String, List<Map<String, String>>> entry : partitions.entrySet()) {
             String attributeValue = entry.getKey();
@@ -150,6 +153,9 @@ public class DecisionTree {
     }
 
     public String predict(Node node, Map<String, String> instance) {
+        if (node == null) {
+            return "Unknown";
+        }
         if (node.isLeaf()) {
             return node.classification;
         }
