@@ -25,43 +25,31 @@ public class DecisionTree {
     }
 
     private double informationGain(String attribute, String targetAttribute, List<Map<String, String>> data) {
-        // total entropy of the dataset
         Map<String, Integer> targetCounts = new HashMap<>();
         for (Map<String, String> example : data) {
             String targetValue = example.get(targetAttribute);
             targetCounts.put(targetValue, targetCounts.getOrDefault(targetValue, 0) + 1);
         }
+        long totalPositive = targetCounts.getOrDefault("EDIBLE", 0);
+        long totalNegative = targetCounts.getOrDefault("POISONOUS", 0);
+        double totalEntropy = entropy(totalPositive, totalNegative);
 
-        double totalEntropy = 0;
-        long totalExamples = data.size();
-        for (int count : targetCounts.values()) {
-            totalEntropy += ((double) count / totalExamples) * entropy(count, totalExamples - count);
-        }
-
-        // entropy after splitting by the attribute
         Map<String, List<Map<String, String>>> partitions = partitionData(data, attribute);
         double weightedEntropy = 0;
 
         for (List<Map<String, String>> subset : partitions.values()) {
-            long subsetSize = subset.size();
+            long subsetPositive = 0;
+            long subsetNegative = 0;
 
-            // count positive and negative instances in the subset
-            Map<String, Integer> subsetTargetCounts = new HashMap<>();
             for (Map<String, String> example : subset) {
                 String targetValue = example.get(targetAttribute);
-                subsetTargetCounts.put(targetValue, subsetTargetCounts.getOrDefault(targetValue, 0) + 1);
+                if ("EDIBLE".equals(targetValue)) subsetPositive++;
+                else subsetNegative++;
             }
 
-            // entropy for this subset
-            double subsetEntropy = 0;
-            for (int count : subsetTargetCounts.values()) {
-                subsetEntropy += ((double) count / subsetSize) * entropy(count, subsetSize - count);
-            }
-
-            // weight by the size of the subset
-            weightedEntropy += (double) (subsetSize / totalExamples) * subsetEntropy;
+            long subsetSize = subset.size();
+            weightedEntropy += ((double) subsetSize / data.size()) * entropy(subsetPositive, subsetNegative);
         }
-
 
         return totalEntropy - weightedEntropy;
     }
@@ -103,15 +91,23 @@ public class DecisionTree {
         }
 
         String bestAttribute = null;
-        double bestGainRatio = 0;
+        double bestGainRatio = 0.0;
 
+        double bestInfoGain = 0.0;
         for (String attribute : attributes) {
             double gainRatio = gainRatio(attribute, targetAttribute, data);
+//            double infoGain = informationGain(attribute, targetAttribute, data);
             System.out.println("Attribute: " + attribute + ", Gain Ratio: " + gainRatio);
+//            System.out.println("Attribute: " + attribute + ", Information Gain: " + infoGain);
             if (gainRatio > bestGainRatio) {
                 bestGainRatio = gainRatio;
                 bestAttribute = attribute;
             }
+
+//            if (infoGain > bestInfoGain) {
+//                bestInfoGain = infoGain;
+//                bestAttribute = attribute;
+//            }
 
         }
         System.out.println("===========================================");
