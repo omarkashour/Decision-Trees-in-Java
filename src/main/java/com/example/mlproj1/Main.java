@@ -83,9 +83,9 @@ public class Main extends Application {
             pane.setMinWidth(3000);
             pane.setMinHeight(3000);
            
-            double treeWidth = calculateSubtreeWidth(tree.root, 30);  // Calculate tree width
-            double paneWidth = Math.max(treeWidth + 200, 1000);  // Ensure a minimum width and add some margin for visibility
-            pane.setPrefWidth(paneWidth);  // Set preferred width of the pane
+            double treeWidth = calculateSubtreeWidth(tree.root, 30);
+            double paneWidth = Math.max(treeWidth + 200, 1000);
+            pane.setPrefWidth(paneWidth);
 
 
             double rootX = paneWidth / 2.0;
@@ -93,9 +93,9 @@ public class Main extends Application {
 
             ScrollPane scrollPane = new ScrollPane(pane);
             scrollPane.setPannable(true); 
-            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure horizontal scrollbar is visible when needed
-            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure vertical scrollbar is visible
-            scrollPane.setFitToWidth(false); // Do not fit to width automatically (avoid scaling the content)
+            scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+            scrollPane.setFitToWidth(false);
 
             Label mainL = new Label("Decision Tree in Java");
 
@@ -205,12 +205,12 @@ public class Main extends Application {
             
             bp.setMargin(scrollPane, new Insets(15));
             bp.setStyle(
-            	    "-fx-border-color: transparent; " + // Outer border (if needed)
+            	    "-fx-border-color: transparent; " +
             	    "-fx-border-insets: 0; " +
             	    "-fx-border-width: 0; " +
             	    "-fx-background-color: white;" +
-            	    "-fx-region-border-color: black; " + // Separating lines
-            	    "-fx-region-border-width: 2 2 2 2;" // Top, Right, Bottom, Left separators
+            	    "-fx-region-border-color: black; " +
+            	    "-fx-region-border-width: 2 2 2 2;"
             	);
     		Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
@@ -239,7 +239,7 @@ public class Main extends Application {
     private void drawTree(Pane pane, Node node, double x, double y, double horizontalSpacing) {
         if (node == null) return;
 
-        
+
         Circle circle = new Circle(x, y, 20);
         if(node.isLeaf()) {
         	if(node.classification.equals("EDIBLE"))
@@ -256,16 +256,16 @@ public class Main extends Application {
         pane.getChildren().addAll(circle, text);
 
         if (!node.isLeaf() && node.children != null) {
-            double childY = y + 100; // Vertical spacing between levels
+            double childY = y + 200;
 
             double totalSubtreeWidth = calculateSubtreeWidth(node, horizontalSpacing);
-            double currentX = x - totalSubtreeWidth / 2; // Start position for child nodes
+            double currentX = x - totalSubtreeWidth / 2;
 
             for (Map.Entry<String, Node> entry : node.children.entrySet()) {
                 String edgeLabel = entry.getKey();
                 Node childNode = entry.getValue();
 
-                double childSubtreeWidth = calculateSubtreeWidth(childNode, horizontalSpacing);
+                double childSubtreeWidth = calculateSubtreeWidth(childNode, horizontalSpacing) + 4*horizontalSpacing;
                 double childX = currentX + childSubtreeWidth / 2;
 
                 // Draw the edge to the child node
@@ -276,7 +276,7 @@ public class Main extends Application {
                 // Recursively draw the child node
                 drawTree(pane, childNode, childX, childY, horizontalSpacing);
 
-                currentX += childSubtreeWidth + horizontalSpacing; // Update position for the next child
+                currentX += childSubtreeWidth + horizontalSpacing;
             }
         }
     }
