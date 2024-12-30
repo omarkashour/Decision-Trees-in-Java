@@ -57,22 +57,18 @@ public class DecisionTree {
     private double gainRatio(String attribute, String targetAttribute, List<Map<String, String>> data) {
         double infoGain = informationGain(attribute, targetAttribute, data);
 
-        Map<String, Integer> totalCount = new HashMap<>();
+        Map<String, List<Map<String, String>>> partitions = partitionData(data, attribute);
+        double splitInfo = 0;
         int totalExamples = data.size();
 
-        for (Map<String, String> example : data) {
-            String attrValue = example.get(attribute);
-            totalCount.put(attrValue, totalCount.getOrDefault(attrValue, 0) + 1);
-        }
-
-        double splitInfo = 0;
-        for (int count : totalCount.values()) {
-            double prob = (double) count / totalExamples;
+        for (List<Map<String, String>> subset : partitions.values()) {
+            double prob = (double) subset.size() / totalExamples;
             splitInfo -= prob * log2(prob);
         }
 
-        return splitInfo == 0 ? 0 : infoGain / splitInfo;
+        return Math.abs(splitInfo) < 1e-10 ? 0 : infoGain / splitInfo;
     }
+
 
     public Node buildTree(List<Map<String, String>> data, String targetAttribute, ArrayList<String> attributes) {
         // check if all examples belong to one class
