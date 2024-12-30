@@ -107,16 +107,17 @@ public class DecisionTree {
 
         for (String attribute : attributes) {
             double gainRatio = gainRatio(attribute, targetAttribute, data);
+            System.out.println("Attribute: " + attribute + ", Gain Ratio: " + gainRatio);
             if (gainRatio > bestGainRatio) {
                 bestGainRatio = gainRatio;
                 bestAttribute = attribute;
             }
 
         }
-
+        System.out.println("===========================================");
         Node node = new Node(bestAttribute);
         Map<String, List<Map<String, String>>> partitions = partitionData(data, bestAttribute);
-        System.out.println("Best attribute: " + bestAttribute);
+//        System.out.println("Best attribute: " + bestAttribute +", Gain Ratio: " + bestGainRatio);
         ArrayList<String> remainingAttributes = new ArrayList<>(attributes);
         remainingAttributes.remove(bestAttribute);
 //        attributes.remove(bestAttribute);

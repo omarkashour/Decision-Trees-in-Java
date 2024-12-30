@@ -50,7 +50,7 @@ public class Main extends Application {
 
             List<Map<String, String>> data = parseCSV(FILE_PATH);
 
-            double trainingRatio = 0.9;
+            double trainingRatio = 0.5;
             Map<String, List<Map<String, String>>> splitData = splitData(data, trainingRatio);
             List<Map<String, String>> trainingData = splitData.get("train");
             List<Map<String, String>> testData = splitData.get("test");
