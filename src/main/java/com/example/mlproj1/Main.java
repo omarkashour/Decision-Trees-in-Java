@@ -14,11 +14,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -36,7 +32,6 @@ public class Main extends Application {
 
     static final String FILE_PATH = "./mushroom.csv";
     static final String TARGET_ATTRIBUTE = "EDIBLE";
-    
 	Font customFontRegular = Font.loadFont(Main.class.getResourceAsStream("/Product Sans Regular.ttf"), 23);
 	static Font customFontBold = Font.loadFont(Main.class.getResourceAsStream("/Product Sans Bold.ttf"), 23);
 	
@@ -60,32 +55,17 @@ public class Main extends Application {
 
             DecisionTree tree = new DecisionTree();
             tree.root = tree.buildTree(trainingData, TARGET_ATTRIBUTE, attributes);
-
-            System.out.println("Decision Tree:");
-            tree.printTree(tree.root, "");
-
-            // evaluate the tree on the test set
-            System.out.println();
-            System.out.println("Training data size: " + trainingData.size());
-            System.out.println("Test data size: " + testData.size());
-
             Map<String, Double> metrics = tree.evaluate(testData, TARGET_ATTRIBUTE);
 
-            System.out.println("\nEvaluation Metrics:");
-            System.out.printf("Accuracy: %.2f%%\n", metrics.get("accuracy") * 100);
-            System.out.printf("Precision: %.2f%%\n", metrics.get("precision") * 100);
-            System.out.printf("Recall (TPR): %.2f%%\n", metrics.get("recall") * 100);
-            System.out.printf("F-Score: %.2f%%\n", metrics.get("fscore") * 100);
-            System.out.printf("Specificity: %.2f%%\n", metrics.get("specificity") * 100);
-            System.out.printf("False Positive Rate (FPR): %.2f%%\n", metrics.get("fpr") * 100);
-     
+            getMetricsString(tree, trainingData, testData, metrics);
+
             Pane pane = new Pane();
-            pane.setMinWidth(3000);
-            pane.setMinHeight(3000);
+            pane.setMinWidth(4000);
+            pane.setMinHeight(4000);
            
             double treeWidth = calculateSubtreeWidth(tree.root, 30);
             double paneWidth = Math.max(treeWidth + 200, 1000);
-            pane.setPrefWidth(paneWidth);
+//            pane.setPrefWidth(paneWidth);
 
 
             double rootX = paneWidth / 2.0;
@@ -136,8 +116,11 @@ public class Main extends Application {
             fScoreTF.setEditable(false);
             specificityTF.setEditable(false);
             falsePositiveRateTF.setEditable(false);
-            
-            
+
+
+            System.out.println(getMetricsString(tree,trainingData,testData,metrics));
+
+            TextArea ta = new TextArea(getMetricsString(tree,trainingData,testData,metrics));
             trainingRatioSlider.setOnMouseReleased(e-> {
                 double newTrainRatio = trainingRatioSlider.getValue();
                 trainingRatioL.setText("Training Ratio: " + String.format("%.2f", newTrainRatio));
@@ -156,12 +139,27 @@ public class Main extends Application {
                 fScoreTF.setText(String.format("%.2f%%", newMetrics.get("fscore") * 100));
                 specificityTF.setText(String.format("%.2f%%", newMetrics.get("specificity") * 100));
                 falsePositiveRateTF.setText(String.format("%.2f%%", newMetrics.get("fpr") * 100));
-
+                ta.setText(getMetricsString(tree,newTrainingData,newTestData,metrics));
                 pane.getChildren().clear();
                 drawTree(pane, tree.root, rootX, 50, 30);
+                System.out.println(getMetricsString(tree,newTrainingData,newTestData,newMetrics));
             });
             
-            Button buildTreeBtn = new Button("Build Tree");
+            Button moreDetailsBtn = new Button("More Details");
+            moreDetailsBtn.setOnAction(e->{
+                Stage detailsStage = new Stage();
+                BorderPane detailsBP = new BorderPane();
+                Label header = new Label("More Details");
+                detailsBP.setTop(header);
+                detailsBP.setCenter(ta);
+                detailsBP.setMargin(ta,new Insets(15));
+                detailsBP.setAlignment(ta,Pos.CENTER);
+                detailsBP.setAlignment(header,Pos.CENTER);
+                Scene detailsScene = new Scene(detailsBP,400 ,400);
+                detailsScene.getStylesheets().add(getClass().getResource("/css/style.css").toString());
+                detailsStage.setScene(detailsScene);
+                detailsStage.show();
+            });
             
             topGP.setAlignment(Pos.CENTER);
             topGP.setHgap(15);
@@ -180,7 +178,7 @@ public class Main extends Application {
             gp.add(fScoreTF, 1, 4);
             gp.add(specificityTF, 1, 5);
             gp.add(falsePositiveRateTF, 1, 6);
-//            gp.add(buildTreeBtn, 1, 7);
+            gp.add(moreDetailsBtn, 1, 7);
             
             gp.setVgap(15);
             gp.setHgap(15);
@@ -224,7 +222,28 @@ public class Main extends Application {
             System.err.println("Error reading the dataset: " + e.getMessage());
         }
     }
-    
+
+    private static String getMetricsString(DecisionTree tree, List<Map<String, String>> trainingData, List<Map<String, String>> testData, Map<String, Double> metrics) {
+        StringBuilder output = new StringBuilder();
+        output.append("Decision Tree:\n");
+        output.append(tree.toString());
+
+        output.append("\nTraining data size: ").append(trainingData.size()).append("\n");
+        output.append("Test data size: ").append(testData.size()).append("\n");
+
+
+        output.append("\nEvaluation Metrics:\n");
+        output.append(String.format("Accuracy: %.2f%%\n", metrics.get("accuracy") * 100));
+        output.append(String.format("Precision: %.2f%%\n", metrics.get("precision") * 100));
+        output.append(String.format("Recall (TPR): %.2f%%\n", metrics.get("recall") * 100));
+        output.append(String.format("F-Score: %.2f%%\n", metrics.get("fscore") * 100));
+        output.append(String.format("Specificity: %.2f%%\n", metrics.get("specificity") * 100));
+        output.append(String.format("False Positive Rate (FPR): %.2f%%\n", metrics.get("fpr") * 100));
+
+        return output.toString();
+    }
+
+
     private double calculateSubtreeWidth(Node node, double horizontalSpacing) {
         if (node == null || node.isLeaf() || node.children == null) {
             return 0;

@@ -215,5 +215,26 @@ public class DecisionTree {
             }
         }
     }
+
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+        buildTreeString(root, "", output);
+        return output.toString();
+    }
+
+    private void buildTreeString(Node node, String indent, StringBuilder output) {
+        if (node == null) return;
+
+        if (node.isLeaf()) {
+            output.append(indent).append("Leaf Node: Class = ").append(node.classification).append("\n");
+        } else {
+            output.append(indent).append("Decision Node: Attribute = ").append(node.attribute).append("\n");
+            for (Map.Entry<String, Node> entry : node.children.entrySet()) {
+                output.append(indent).append("  If ").append(node.attribute).append(" is [").append(entry.getKey()).append("]:\n");
+                buildTreeString(entry.getValue(), indent + "----", output);
+            }
+        }
+    }
+
 }
 
